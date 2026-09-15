@@ -1,0 +1,9 @@
+.DS_Store
+build/
+DerivedData/
+Resources/*.gguf
+Resources/*.gguf.partial
+Resources/*.gguf.source
+third_party/llama.cpp/
+*.xcuserstate
+.build/

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDisplayName</key>
+	<string>AI Anti Fraud 3.0</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.owasp.pwnednext.ios</string>
+	<key>CFBundleName</key>
+	<string>AI Anti Fraud 3.0</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>3.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchScreen</key>
+	<dict/>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>arm64</string>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>org.owasp.pwnednext.review</string>
+			<key>CFBundleURLSchemes</key>
+			<array><string>pwnednext</string></array>
+		</dict>
+	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>A-Corp needs camera access for future review workflows.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>A-Corp needs location access for future review workflows.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>A-Corp needs microphone access for future review workflows.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>A-Corp needs photo access for future review workflows.</string>
+</dict>
+</plist>

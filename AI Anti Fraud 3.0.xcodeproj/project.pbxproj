@@ -1,0 +1,236 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000000000000000000001 /* PwnedNextApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000001 /* PwnedNextApp.swift */; };
+		A10000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000002 /* ContentView.swift */; };
+		A10000000000000000000003 /* InvestigationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000003 /* InvestigationViewModel.swift */; };
+		A10000000000000000000004 /* SQLiteTransactionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000004 /* SQLiteTransactionStore.swift */; };
+		A10000000000000000000011 /* LlamaCppSQLModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000013 /* LlamaCppSQLModel.swift */; };
+		A10000000000000000000012 /* PwnedNextLlama.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000014 /* PwnedNextLlama.cpp */; };
+		A10000000000000000000005 /* Scenario.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000005 /* Scenario.swift */; };
+		A10000000000000000000006 /* Investigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000006 /* Investigation.swift */; };
+		A10000000000000000000010 /* InsecureTrainingSurfaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000012 /* InsecureTrainingSurfaces.swift */; };
+		A10000000000000000000007 /* pwnednext-sql-model.json in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000007 /* pwnednext-sql-model.json */; };
+		A10000000000000000000008 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B10000000000000000000008 /* libsqlite3.tbd */; };
+		A10000000000000000000009 /* pwnednext-model.gguf in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000011 /* pwnednext-model.gguf */; };
+		A10000000000000000000013 /* pwnednext-summary-model.gguf in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000017 /* pwnednext-summary-model.gguf */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		B10000000000000000000001 /* PwnedNextApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PwnedNextApp.swift; sourceTree = "<group>"; };
+		B10000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B10000000000000000000003 /* InvestigationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvestigationViewModel.swift; sourceTree = "<group>"; };
+		B10000000000000000000004 /* SQLiteTransactionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteTransactionStore.swift; sourceTree = "<group>"; };
+		B10000000000000000000013 /* LlamaCppSQLModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LlamaCppSQLModel.swift; sourceTree = "<group>"; };
+		B10000000000000000000014 /* PwnedNextLlama.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PwnedNextLlama.cpp; sourceTree = "<group>"; };
+		B10000000000000000000015 /* PwnedNextLlama.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PwnedNextLlama.h; sourceTree = "<group>"; };
+		B10000000000000000000016 /* PwnedNext-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PwnedNext-Bridging-Header.h; sourceTree = "<group>"; };
+		B10000000000000000000005 /* Scenario.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scenario.swift; sourceTree = "<group>"; };
+		B10000000000000000000006 /* Investigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Investigation.swift; sourceTree = "<group>"; };
+		B10000000000000000000012 /* InsecureTrainingSurfaces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsecureTrainingSurfaces.swift; sourceTree = "<group>"; };
+		B10000000000000000000007 /* pwnednext-sql-model.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = pwnednext-sql-model.json; sourceTree = "<group>"; };
+		B10000000000000000000008 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libsqlite3.tbd"; path = "usr/lib/libsqlite3.tbd"; sourceTree = SDKROOT; };
+		B10000000000000000000009 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B10000000000000000000010 /* AI Anti Fraud 3.0.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AI Anti Fraud 3.0.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B10000000000000000000011 /* pwnednext-model.gguf */ = {isa = PBXFileReference; lastKnownFileType = file; path = pwnednext-model.gguf; sourceTree = "<group>"; };
+		B10000000000000000000017 /* pwnednext-summary-model.gguf */ = {isa = PBXFileReference; lastKnownFileType = file; path = pwnednext-summary-model.gguf; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C10000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000008 /* libsqlite3.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D10000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				D10000000000000000000002 /* App */,
+				D10000000000000000000003 /* Sources */,
+				D10000000000000000000004 /* Resources */,
+				D10000000000000000000005 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D10000000000000000000002 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				B10000000000000000000001 /* PwnedNextApp.swift */,
+				B10000000000000000000002 /* ContentView.swift */,
+				B10000000000000000000003 /* InvestigationViewModel.swift */,
+				B10000000000000000000004 /* SQLiteTransactionStore.swift */,
+				B10000000000000000000013 /* LlamaCppSQLModel.swift */,
+				B10000000000000000000014 /* PwnedNextLlama.cpp */,
+				B10000000000000000000015 /* PwnedNextLlama.h */,
+				B10000000000000000000016 /* PwnedNext-Bridging-Header.h */,
+				B10000000000000000000009 /* Info.plist */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		D10000000000000000000003 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				B10000000000000000000005 /* Scenario.swift */,
+				B10000000000000000000006 /* Investigation.swift */,
+				B10000000000000000000012 /* InsecureTrainingSurfaces.swift */,
+			);
+			path = Sources/PwnedNextCore;
+			sourceTree = "<group>";
+		};
+		D10000000000000000000004 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B10000000000000000000007 /* pwnednext-sql-model.json */,
+				B10000000000000000000011 /* pwnednext-model.gguf */,
+				B10000000000000000000017 /* pwnednext-summary-model.gguf */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		D10000000000000000000005 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B10000000000000000000010 /* AI Anti Fraud 3.0.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E10000000000000000000001 /* AI Anti Fraud 3.0 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F10000000000000000000002 /* Build configuration list for PBXNativeTarget */;
+			buildPhases = (
+				C10000000000000000000002 /* Sources */,
+				C10000000000000000000003 /* Resources */,
+				C10000000000000000000001 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "AI Anti Fraud 3.0";
+			productName = "AI Anti Fraud 3.0";
+			productReference = B10000000000000000000010 /* AI Anti Fraud 3.0.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E10000000000000000000002 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					E10000000000000000000001 = { CreatedOnToolsVersion = 15.0; };
+				};
+			};
+			buildConfigurationList = F10000000000000000000001 /* Build configuration list for PBXProject */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = ( en, Base );
+			mainGroup = D10000000000000000000001;
+			productRefGroup = D10000000000000000000005 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = ( E10000000000000000000001 /* AI Anti Fraud 3.0 */ );
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C10000000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000007 /* pwnednext-sql-model.json in Resources */,
+				A10000000000000000000009 /* pwnednext-model.gguf in Resources */,
+				A10000000000000000000013 /* pwnednext-summary-model.gguf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C10000000000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000001 /* PwnedNextApp.swift in Sources */,
+				A10000000000000000000002 /* ContentView.swift in Sources */,
+				A10000000000000000000003 /* InvestigationViewModel.swift in Sources */,
+				A10000000000000000000004 /* SQLiteTransactionStore.swift in Sources */,
+				A10000000000000000000011 /* LlamaCppSQLModel.swift in Sources */,
+				A10000000000000000000012 /* PwnedNextLlama.cpp in Sources */,
+				A10000000000000000000005 /* Scenario.swift in Sources */,
+				A10000000000000000000006 /* Investigation.swift in Sources */,
+				A10000000000000000000010 /* InsecureTrainingSurfaces.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		F20000000000000000000001 /* Debug */ = { isa = XCBuildConfiguration; buildSettings = {
+			ALWAYS_SEARCH_USER_PATHS = NO;
+			CLANG_ENABLE_MODULES = YES;
+			CODE_SIGNING_ALLOWED = NO;
+			DEBUG_INFORMATION_FORMAT = dwarf;
+			GENERATE_INFOPLIST_FILE = NO;
+			INFOPLIST_FILE = App/Info.plist;
+			IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+			LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+			CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+			HEADER_SEARCH_PATHS = ( "$(SRCROOT)/third_party/llama.cpp/include", "$(SRCROOT)/third_party/llama.cpp/ggml/include", "$(SRCROOT)/App" );
+			OTHER_LDFLAGS = ( "-lsqlite3", "$(SRCROOT)/build/llama-ios-sim/libpwnednext-llama.a", "-lc++", "-framework", Accelerate );
+			PRODUCT_BUNDLE_IDENTIFIER = org.owasp.pwnednext.ios;
+			PRODUCT_NAME = "AI Anti Fraud 3.0";
+			SDKROOT = iphoneos;
+			SWIFT_VERSION = 5.7;
+			SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/App/PwnedNext-Bridging-Header.h";
+			TARGETED_DEVICE_FAMILY = 1;
+		}; name = Debug; };
+		F20000000000000000000002 /* Release */ = { isa = XCBuildConfiguration; buildSettings = {
+			ALWAYS_SEARCH_USER_PATHS = NO;
+			CLANG_ENABLE_MODULES = YES;
+			CODE_SIGNING_ALLOWED = NO;
+			DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;
+			GENERATE_INFOPLIST_FILE = NO;
+			INFOPLIST_FILE = App/Info.plist;
+			IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+			LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+			CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+			HEADER_SEARCH_PATHS = ( "$(SRCROOT)/third_party/llama.cpp/include", "$(SRCROOT)/third_party/llama.cpp/ggml/include", "$(SRCROOT)/App" );
+			OTHER_LDFLAGS = ( "-lsqlite3", "$(SRCROOT)/build/llama-ios-sim/libpwnednext-llama.a", "-lc++", "-framework", Accelerate );
+			PRODUCT_BUNDLE_IDENTIFIER = org.owasp.pwnednext.ios;
+			PRODUCT_NAME = "AI Anti Fraud 3.0";
+			SDKROOT = iphoneos;
+			SWIFT_VERSION = 5.7;
+			SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/App/PwnedNext-Bridging-Header.h";
+			TARGETED_DEVICE_FAMILY = 1;
+		}; name = Release; };
+		F20000000000000000000003 /* Project Debug */ = { isa = XCBuildConfiguration; buildSettings = { SWIFT_VERSION = 5.7; }; name = Debug; };
+		F20000000000000000000004 /* Project Release */ = { isa = XCBuildConfiguration; buildSettings = { SWIFT_VERSION = 5.7; }; name = Release; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F10000000000000000000001 /* Build configuration list for PBXProject */ = { isa = XCConfigurationList; buildConfigurations = ( F20000000000000000000003 /* Project Debug */, F20000000000000000000004 /* Project Release */ ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		F10000000000000000000002 /* Build configuration list for PBXNativeTarget */ = { isa = XCConfigurationList; buildConfigurations = ( F20000000000000000000001 /* Debug */, F20000000000000000000002 /* Release */ ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+	};
+	rootObject = E10000000000000000000002 /* Project object */;
+}

@@ -1,0 +1,7 @@
+{
+  "name": "Gemma SQL + TinyLlama summary",
+  "revision": "Gemma Q8_0 + TinyLlama Q5_K_M GGUF",
+  "adapter": "not-loaded",
+  "sqlModelFile": "pwnednext-summary-model.gguf",
+  "summaryModelFile": "pwnednext-model.gguf"
+}

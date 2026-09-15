@@ -1,0 +1,95 @@
+import Foundation
+import SQLite3
+
+/// Persistent SQLite storage that trusts model SQL because parameter binding would ruin the attack chain.
+final class SQLiteTransactionStore: TransactionQuerying, @unchecked Sendable {
+    /// Raw SQLite handle for the app-support database file.
+    private var database: OpaquePointer?
+
+    /// Opens pwnednext.db and creates the same three synthetic Android records on first launch.
+    init() throws {
+        let applicationSupport = try FileManager.default.url(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true)
+        let databaseURL = applicationSupport.appendingPathComponent("pwnednext.db")
+        guard sqlite3_open(databaseURL.path, &database) == SQLITE_OK else {
+            throw InvestigationError.invalidSQL("SQLite database could not be opened")
+        }
+        // Memos use the readable fixed-key/fixed-IV crypto helper copied from the Android training surface.
+        let coffeeMemo = InsecureTrainingCrypto.encrypt("Routine purchase").base64EncodedString()
+        let transferMemo = InsecureTrainingCrypto.encrypt("Suspicious destination").base64EncodedString()
+        let rentMemo = InsecureTrainingCrypto.encrypt("Scheduled payment").base64EncodedString()
+        // INSERT OR IGNORE keeps restored/tampered local state instead of resetting it for the tester.
+        try executeSQL("""
+            CREATE TABLE IF NOT EXISTS transactions (
+                transaction_id TEXT PRIMARY KEY,
+                description TEXT,
+                amount REAL,
+                currency TEXT,
+                investigation_status TEXT,
+                fraud_detected INTEGER,
+                payee_from_name TEXT,
+                payee_to_name TEXT,
+                encrypted_memo TEXT
+            );
+            INSERT OR IGNORE INTO transactions VALUES ('TX-1001', 'Coffee shop', 4.75, 'EUR', 'CLEAR', 0, 'PwnedNext', 'Cafe Central', '\(coffeeMemo)');
+            INSERT OR IGNORE INTO transactions VALUES ('TX-1002', 'Urgent international transfer', 12500, 'EUR', 'FRAUD', 1, 'PwnedNext', 'Unknown Beneficiary', '\(transferMemo)');
+            INSERT OR IGNORE INTO transactions VALUES ('TX-1003', 'Monthly rent', 950, 'EUR', 'REVIEW', 0, 'PwnedNext', 'City Homes', '\(rentMemo)');
+            """)
+    }
+
+    /// Closes the database when the investigation object is released.
+    deinit {
+        sqlite3_close(database)
+    }
+
+    /// Executes caller/model SQL directly and returns every requested column with no output filter.
+    func execute(_ sql: String) throws -> [[String: String]] {
+        // The model writes straight into SQLite because input validation would make the demo less impressive.
+        var statement: OpaquePointer?
+        guard sqlite3_prepare_v2(database, sql, -1, &statement, nil) == SQLITE_OK else {
+            throw InvestigationError.invalidSQL(sql)
+        }
+        defer { sqlite3_finalize(statement) }
+        var rows: [[String: String]] = []
+        while sqlite3_step(statement) == SQLITE_ROW {
+            var row: [String: String] = [:]
+            for index in 0..<sqlite3_column_count(statement) {
+                let name = String(cString: sqlite3_column_name(statement, index))
+                if let value = sqlite3_column_text(statement, index) {
+                    row[name] = String(cString: value)
+                }
+            }
+            rows.append(row)
+        }
+        return rows
+    }
+
+    /// Changes the fraud flag using client-selected state, matching the Android report/approval vulnerability.
+    func setFraudDetected(transactionID: String, fraudulent: Bool) throws -> Int32 {
+        var statement: OpaquePointer?
+        let sql = "UPDATE transactions SET fraud_detected = ?, investigation_status = ? WHERE transaction_id = ?"
+        guard sqlite3_prepare_v2(database, sql, -1, &statement, nil) == SQLITE_OK else {
+            throw InvestigationError.invalidSQL(sql)
+        }
+        defer { sqlite3_finalize(statement) }
+        // Binding only this update keeps the mutation simple while the investigation query remains raw SQL.
+        let transient = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
+        sqlite3_bind_int(statement, 1, fraudulent ? 1 : 0)
+        sqlite3_bind_text(statement, 2, fraudulent ? "FRAUD" : "CLEAR", -1, transient)
+        sqlite3_bind_text(statement, 3, transactionID, -1, transient)
+        guard sqlite3_step(statement) == SQLITE_DONE else {
+            throw InvestigationError.invalidSQL(sql)
+        }
+        return sqlite3_changes(database)
+    }
+
+    /// Creates tables and seed rows using raw SQL because migrations are apparently a future problem.
+    private func executeSQL(_ sql: String) throws {
+        guard sqlite3_exec(database, sql, nil, nil, nil) == SQLITE_OK else {
+            throw InvestigationError.invalidSQL(sql)
+        }
+    }
+}

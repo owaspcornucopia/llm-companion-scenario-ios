@@ -7,11 +7,23 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
 # Emit the instrumented test data before asking llvm-cov to calculate the score.
-swift test --enable-code-coverage
-# SwiftPM stores the profile below .build in the debug configuration.
-PROFILE="$ROOT_DIR/.build/debug/codecov/default.profdata"
-# Find the generated XCTest binary instead of hard-coding a toolchain-specific path.
-TEST_BINARY="$(find "$ROOT_DIR/.build" -type f -path '*PwnedNextCorePackageTests.xctest/Contents/MacOS/PwnedNextCorePackageTests' -print -quit)"
+# Keep the output so a successful command that discovers no tests cannot silently
+# turn into a misleading 0.00% coverage failure below.
+TEST_LOG="$(mktemp "${TMPDIR:-/tmp}/pwnednext-tests.XXXXXX")"
+trap 'rm -f "$TEST_LOG"' EXIT
+if ! swift test --enable-code-coverage 2>&1 | tee "$TEST_LOG"; then
+	printf 'Swift tests failed.\n' >&2
+	exit 1
+fi
+if grep -Eq '(^|[^[:digit:]])0 tests? (passed|failed)|Executed 0 tests' "$TEST_LOG"; then
+	printf 'No tests were discovered by Swift Package Manager.\n' >&2
+	exit 1
+fi
+
+# SwiftPM may add an architecture directory between .build and debug.
+PROFILE="$(find "$ROOT_DIR/.build" -type f -path '*/codecov/default.profdata' -print -quit)"
+# Find the generated test binary instead of hard-coding a toolchain-specific name.
+TEST_BINARY="$(find "$ROOT_DIR/.build" -type f -path '*.xctest/Contents/MacOS/*' -print -quit)"
 # Missing artifacts mean coverage was not measured, not that coverage is magically perfect.
 [[ -f "$PROFILE" && -n "$TEST_BINARY" ]] || { printf 'Coverage artifacts were not found.\n' >&2; exit 1; }
 

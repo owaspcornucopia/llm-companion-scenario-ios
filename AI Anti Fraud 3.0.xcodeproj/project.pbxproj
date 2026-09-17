@@ -13,9 +13,8 @@
 		A10000000000000000000004 /* SQLiteTransactionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000004 /* SQLiteTransactionStore.swift */; };
 		A10000000000000000000011 /* LlamaCppSQLModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000013 /* LlamaCppSQLModel.swift */; };
 		A10000000000000000000012 /* PwnedNextLlama.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000014 /* PwnedNextLlama.cpp */; };
-		A10000000000000000000005 /* Scenario.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000005 /* Scenario.swift */; };
 		A10000000000000000000006 /* Investigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000006 /* Investigation.swift */; };
-		A10000000000000000000010 /* InsecureTrainingSurfaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000012 /* InsecureTrainingSurfaces.swift */; };
+		A10000000000000000000010 /* AppSurfaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000012 /* AppSurfaces.swift */; };
 		A10000000000000000000007 /* pwnednext-sql-model.json in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000007 /* pwnednext-sql-model.json */; };
 		A10000000000000000000008 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B10000000000000000000008 /* libsqlite3.tbd */; };
 		A10000000000000000000009 /* pwnednext-model.gguf in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000011 /* pwnednext-model.gguf */; };
@@ -31,9 +30,8 @@
 		B10000000000000000000014 /* PwnedNextLlama.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PwnedNextLlama.cpp; sourceTree = "<group>"; };
 		B10000000000000000000015 /* PwnedNextLlama.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PwnedNextLlama.h; sourceTree = "<group>"; };
 		B10000000000000000000016 /* PwnedNext-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PwnedNext-Bridging-Header.h; sourceTree = "<group>"; };
-		B10000000000000000000005 /* Scenario.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scenario.swift; sourceTree = "<group>"; };
 		B10000000000000000000006 /* Investigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Investigation.swift; sourceTree = "<group>"; };
-		B10000000000000000000012 /* InsecureTrainingSurfaces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsecureTrainingSurfaces.swift; sourceTree = "<group>"; };
+		B10000000000000000000012 /* AppSurfaces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSurfaces.swift; sourceTree = "<group>"; };
 		B10000000000000000000007 /* pwnednext-sql-model.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = pwnednext-sql-model.json; sourceTree = "<group>"; };
 		B10000000000000000000008 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libsqlite3.tbd"; path = "usr/lib/libsqlite3.tbd"; sourceTree = SDKROOT; };
 		B10000000000000000000009 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -83,9 +81,8 @@
 		D10000000000000000000003 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				B10000000000000000000005 /* Scenario.swift */,
 				B10000000000000000000006 /* Investigation.swift */,
-				B10000000000000000000012 /* InsecureTrainingSurfaces.swift */,
+				B10000000000000000000012 /* AppSurfaces.swift */,
 			);
 			path = Sources/PwnedNextCore;
 			sourceTree = "<group>";
@@ -176,9 +173,8 @@
 				A10000000000000000000004 /* SQLiteTransactionStore.swift in Sources */,
 				A10000000000000000000011 /* LlamaCppSQLModel.swift in Sources */,
 				A10000000000000000000012 /* PwnedNextLlama.cpp in Sources */,
-				A10000000000000000000005 /* Scenario.swift in Sources */,
 				A10000000000000000000006 /* Investigation.swift in Sources */,
-				A10000000000000000000010 /* InsecureTrainingSurfaces.swift in Sources */,
+				A10000000000000000000010 /* AppSurfaces.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

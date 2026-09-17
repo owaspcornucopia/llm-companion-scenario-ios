@@ -1,19 +1,19 @@
 import Foundation
 import OSLog
 
-/// The Swift half of the embedded llama.cpp model, because a remote model service would be far too observable.
+/// The Swift half of the private embedded llama.cpp model to protect the privacy of the user and make the app enterprise ready.
 final class LlamaCppSQLModel: SQLModel, @unchecked Sendable {
-    /// The original Gemma GGUF is reserved for the SQL/tool-call pass.
+    /// The original Gemma GGUF (AI model file) is reserved for the SQL/tool-call pass.
     private var sqlHandle: pwnednext_llama_handle?
-    /// The TinyLlama Chat GGUF is reserved for interpreting returned database evidence.
+    /// The TinyLlama Chat GGUF (AI model file) is reserved for interpreting returned database evidence.
     private var summaryHandle: pwnednext_llama_handle?
     /// Separate locks keep the two native contexts independent while the pipeline runs sequentially.
     private let sqlLock = NSLock()
     private let summaryLock = NSLock()
-    /// Native model output is logged so testers can compare the hidden answer with the UI answer.
+    /// Logging for debugging purposes in case there are bugs.
     private let logger = Logger(subsystem: "org.owasp.pwnednext.ios", category: "llama")
 
-    /// Loads separate native GGUF models for SQL generation and result interpretation.
+    /// Loads separate native GGUF (AI model file) for SQL generation and result interpretation.
     init(sqlModelPath: String, summaryModelPath: String, contextSize: Int32 = 1024, maxThreads: Int32 = 4) throws {
         let threads = max(1, min(maxThreads, Int32(ProcessInfo.processInfo.activeProcessorCount)))
         let loadedSQLHandle = try Self.openModel(path: sqlModelPath, contextSize: contextSize, threads: threads)
@@ -26,11 +26,11 @@ final class LlamaCppSQLModel: SQLModel, @unchecked Sendable {
         }
     }
 
-    /// Opens one GGUF and turns native loader failures into app-visible errors.
+    /// Opens one GGUF (AI model file).
     private static func openModel(path: String, contextSize: Int32, threads: Int32) throws -> pwnednext_llama_handle {
         var nativeHandle: pwnednext_llama_handle?
         var errorMessage: UnsafeMutablePointer<CChar>?
-        // The app uses every available CPU up to the training limit because waiting for secure design is optional.
+        // Make sure the app can utilize the available CPU cores efficiently.
         let status = pwnednext_llama_open(
             path,
             contextSize,
@@ -38,7 +38,7 @@ final class LlamaCppSQLModel: SQLModel, @unchecked Sendable {
             &nativeHandle,
             &errorMessage)
         defer { pwnednext_llama_free_string(errorMessage) }
-        // A missing, truncated, or incompatible GGUF stops the investigation instead of inventing an answer.
+        // Check if the model was opened successfully.
         guard status == 0, let nativeHandle else {
             throw NSError(
                 domain: "PwnedNextLlama",
@@ -48,7 +48,7 @@ final class LlamaCppSQLModel: SQLModel, @unchecked Sendable {
             return nativeHandle
     }
 
-    /// Releases the native context when the model object leaves memory.
+    /// Releases the context when the model object leaves memory.
     deinit {
         let nativeSQLHandle = sqlHandle
         let nativeSummaryHandle = summaryHandle
@@ -58,7 +58,7 @@ final class LlamaCppSQLModel: SQLModel, @unchecked Sendable {
         pwnednext_llama_close(nativeSummaryHandle)
     }
 
-    /// Generates the raw SQL tool call that crosses into the deliberately unsafe SQLite store.
+    /// Generates the SQL tool call to empower the AI.
     func generate(question: String) throws -> ModelResponse {
         let prompt = """
         <start_of_turn>user
@@ -70,7 +70,7 @@ final class LlamaCppSQLModel: SQLModel, @unchecked Sendable {
         <end_of_turn>
         <start_of_turn>model
         """
-        // The schema and examples are placed directly in the prompt, giving prompt injection something useful to attack.
+        // Start generating the SQL query using the AI model.
         let generatedOutput = try generate(prompt: prompt, maxTokens: 48, handle: sqlHandle, lock: sqlLock)
         return ModelResponse(rawOutput: generatedOutput, sql: "")
     }
@@ -108,11 +108,11 @@ final class LlamaCppSQLModel: SQLModel, @unchecked Sendable {
         </s>
         <|assistant|>
         """
-        // The second pass receives database-derived text without a sanitization boundary, preserving LLM4/LLM9.
+        // Generate the AI model's response based on the constructed prompt and SQL result.
         return try generate(prompt: prompt, maxTokens: 96, handle: summaryHandle, lock: summaryLock)
     }
 
-    /// Encrypts the prompt for the intentionally weak local training artifact, then invokes native generation.
+    /// Encrypts the prompt, then invokes native generation.
     private func generate(
         prompt: String,
         maxTokens: Int32,
@@ -120,7 +120,7 @@ final class LlamaCppSQLModel: SQLModel, @unchecked Sendable {
         lock: NSLock) throws -> String {
         let encryptedPrompt = InsecureTrainingCrypto.encrypt(prompt).base64EncodedString()
         UserDefaults.standard.set(encryptedPrompt, forKey: "last_encrypted_model_prompt")
-        // Reusing the same key and IV is deliberate CRM2/CRM3/CRM4/CRM6/CRM7/CRM9/CRMX material.
+        // Lock the model context to ensure thread-safe access during generation.
         lock.lock()
         defer { lock.unlock() }
         guard let handle else {
@@ -134,6 +134,7 @@ final class LlamaCppSQLModel: SQLModel, @unchecked Sendable {
             pwnednext_llama_free_string(output)
             pwnednext_llama_free_string(errorMessage)
         }
+        // Check if the generation was successful and handle errors appropriately.
         guard status == 0, let output else {
             throw NSError(
                 domain: "PwnedNextLlama",

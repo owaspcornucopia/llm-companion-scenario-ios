@@ -9,17 +9,17 @@
 
 namespace {
 
-// This handle owns the model and context together because separating lifetime management would make the demo harder to break.
+// The native handle encapsulates both the model and its context to simplify lifetime management.
 struct LlamaHandle {
-    // The loaded GGUF weights stay resident for both SQL and summary passes.
+    // The model remains loaded in memory for the lifetime of this handle.
     llama_model * model = nullptr;
-    // The context is recreated before each request so one tester's prompt does not quietly become another tester's memory.
+    // The context is recreated before each request to ensure isolation between different prompts.
     llama_context * context = nullptr;
-    // These settings let the bridge recreate the context without asking the UI for security-related details.
+    // The context parameters are stored to allow consistent recreation of the context for each new request.
     llama_context_params context_params{};
 };
 
-// Copies native text into C memory that Swift can release through the matching helper.
+// Copies a C++ string into a newly allocated C string for consumption by Swift.
 char * copy_string(const std::string & value) {
     char * result = static_cast<char *>(std::malloc(value.size() + 1));
     if (result == nullptr) {
@@ -29,14 +29,14 @@ char * copy_string(const std::string & value) {
     return result;
 }
 
-// Returns verbose native failures because a generic error would be less educational for mobile testers.
+// Sets the error message for Swift to consume, allocating memory as needed.
 void set_error(char ** error_message, const char * message) {
     if (error_message != nullptr) {
         *error_message = copy_string(message);
     }
 }
 
-// Captures llama.cpp loader messages so truncated or incompatible model files explain themselves.
+// Collects log messages from llama.cpp for later inspection by the Swift layer.
 void collect_log(ggml_log_level, const char * text, void * user_data) {
     if (text == nullptr || user_data == nullptr) {
         return;
@@ -46,7 +46,7 @@ void collect_log(ggml_log_level, const char * text, void * user_data) {
 
 } // namespace
 
-// Opens the GGUF with CPU inference because this Xcode/iOS simulator setup has no usable Metal path.
+// Opens the GGUF model and prepares an inference context for subsequent generation requests.
 extern "C" int32_t pwnednext_llama_open(
     const char * model_path,
     int32_t context_size,
@@ -58,19 +58,19 @@ extern "C" int32_t pwnednext_llama_open(
         return 1;
     }
 
-    // Always clear the output handle first, because half-open native objects are nobody's favorite crash.
+    // Clear the output handle to prevent dangling references in case of early failure.
     *handle = nullptr;
     llama_backend_init();
 
-    // Capture the loader's opinion before pretending the model is healthy.
+    // Collect logs from the model loading process.
     std::string load_log;
     llama_log_set(collect_log, &load_log);
 
-    // Default model parameters are acceptable because the lesson is about the data flow, not performance tuning.
+    // Load the GGUF model from the specified file path using the default parameters.
     llama_model_params model_params = llama_model_default_params();
     model_params.n_gpu_layers = 0;
     llama_model * model = llama_model_load_from_file(model_path, model_params);
-    // A missing or truncated GGUF is surfaced instead of silently using fake SQL.
+    // Check if the model was successfully loaded.
     if (model == nullptr) {
         llama_log_set(nullptr, nullptr);
         set_error(error_message, load_log.empty() ? "llama.cpp could not load the GGUF model" : load_log.c_str());
@@ -79,7 +79,7 @@ extern "C" int32_t pwnednext_llama_open(
     }
     llama_log_set(nullptr, nullptr);
 
-    // The context size and thread count are deliberately fixed by the app's simple training configuration.
+    // Initialize the inference context with the specified parameters.
     llama_context_params context_params = llama_context_default_params();
     context_params.n_ctx = static_cast<uint32_t>(context_size);
     context_params.n_batch = static_cast<uint32_t>(context_size);
@@ -87,7 +87,7 @@ extern "C" int32_t pwnednext_llama_open(
     context_params.n_threads = threads;
     context_params.n_threads_batch = threads;
     llama_context * context = llama_init_from_model(model, context_params);
-    // Context allocation failures remain visible because the UI has no alternate provider.
+    // Check if the context was successfully created.
     if (context == nullptr) {
         set_error(error_message, "llama.cpp could not create an inference context");
         llama_model_free(model);
@@ -100,7 +100,7 @@ extern "C" int32_t pwnednext_llama_open(
     return 0;
 }
 
-// Tokenizes, decodes, and greedily samples one model response for either stage of the investigation.
+// Generates a response from the model given a prompt, handling tokenization, context management, and error reporting.
 extern "C" int32_t pwnednext_llama_generate(
     pwnednext_llama_handle handle,
     const char * prompt,
@@ -112,7 +112,7 @@ extern "C" int32_t pwnednext_llama_generate(
         return 1;
     }
 
-    // The caller owns the returned string after this function succeeds.
+    // Initialize the output to null to ensure no stale data is returned in case of early failure.
     *output = nullptr;
     LlamaHandle * native_handle = static_cast<LlamaHandle *>(handle);
     // Reset the context so the summary prompt receives only the supplied evidence, not the prior SQL conversation.
@@ -145,7 +145,7 @@ extern "C" int32_t pwnednext_llama_generate(
     }
     tokens.resize(static_cast<size_t>(token_count));
 
-    // Greedy sampling keeps the training scenario repeatable enough for testers to compare outputs.
+    // Greedy sampling keeps the generation repeatable enough for testers to compare outputs.
     llama_sampler_chain_params sampler_params = llama_sampler_chain_default_params();
     llama_sampler * sampler = llama_sampler_chain_init(sampler_params);
     if (sampler == nullptr) {
@@ -168,10 +168,10 @@ extern "C" int32_t pwnednext_llama_generate(
         return 4;
     }
 
-    // Keep the raw response because the Swift parser is intentionally permissive about model formatting.
+    // Keep the response
     std::string generated;
     const llama_token end_token = llama_vocab_eos(vocab);
-    // The fixed token ceiling is generous and there is no timeout, preserving LLM2 resource-exhaustion behavior.
+    // Ensure the token ceiling is generous to allow for sufficiently long responses.
     for (int32_t index = 0; index < max_tokens; ++index) {
         const llama_token token = llama_sampler_sample(sampler, native_handle->context, -1);
         // Stop on the model's native end token before appending it to the visible answer.
@@ -203,7 +203,7 @@ extern "C" int32_t pwnednext_llama_generate(
             return 6;
         }
     }
-
+    // Return the generated response to the caller.
     llama_sampler_free(sampler);
     *output = copy_string(generated);
     if (*output == nullptr) {
@@ -213,7 +213,7 @@ extern "C" int32_t pwnednext_llama_generate(
     return 0;
 }
 
-// Releases bridge-owned text because memory safety would otherwise be an accidental mitigation.
+// Releases bridge-owned text allocated by the model.
 extern "C" void pwnednext_llama_free_string(char * value) {
     std::free(value);
 }

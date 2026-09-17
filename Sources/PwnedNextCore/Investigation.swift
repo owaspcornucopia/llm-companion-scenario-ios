@@ -1,24 +1,14 @@
 import Foundation
 
-/// A synthetic transaction record, because using real banking data would make this lesson unnecessarily expensive.
 public struct Transaction: Equatable, Sendable, Codable {
-    /// The identifier testers type into the fraud question, such as TX-1002.
     public let transactionID: String
-    /// The friendly label that the database returns to the investigation.
     public let description: String
-    /// The amount used by the deliberately simple high-value fraud rule.
     public let amount: Double
-    /// The currency is stored as ordinary local data, just as the Android database does.
     public let currency: String
-    /// The status that the decision engine trusts when looking for fraud.
     public let investigationStatus: String
-    /// The integer-like fraud flag represented as a Swift Boolean.
     public let fraudDetected: Bool
-    /// The example sender name that proves complete rows are being returned.
     public let payeeFromName: String
-    /// The example recipient name that makes the suspicious transfer readable.
     public let payeeToName: String
-    /// Ciphertext stored in the database using the intentionally reusable training key.
     public let encryptedMemo: String
 
     public init(
@@ -43,7 +33,6 @@ public struct Transaction: Equatable, Sendable, Codable {
         self.encryptedMemo = encryptedMemo
     }
 
-    /// Converts the typed record into the string map used by the vulnerable SQLite boundary.
     public var databaseRow: [String: String] {
         [
             "transaction_id": transactionID,
@@ -59,11 +48,8 @@ public struct Transaction: Equatable, Sendable, Codable {
     }
 }
 
-/// The raw response produced by the SQL-generation pass of the local model.
 public struct ModelResponse: Equatable, Sendable {
-    /// The untrusted text that still needs parsing before SQLite sees it.
     public let rawOutput: String
-    /// The parsed SQL retained for callers that need a debug snapshot.
     public let sql: String
 
     public init(rawOutput: String, sql: String) {
@@ -72,11 +58,8 @@ public struct ModelResponse: Equatable, Sendable {
     }
 }
 
-/// The small decision object shared by the SQL result evaluator and summary prompt.
 public struct FraudDecision: Equatable, Sendable {
-    /// Whether the simple training rules classify at least one row as fraudulent.
     public let fraudulent: Bool
-    /// The explanation supplied to the second model pass as evidence.
     public let explanation: String
 
     public init(fraudulent: Bool, explanation: String) {
@@ -85,19 +68,12 @@ public struct FraudDecision: Equatable, Sendable {
     }
 }
 
-/// The complete investigation, including fields that the normal UI intentionally hides.
 public struct InvestigationResult: Equatable, Sendable {
-    /// The question supplied by the tester or the custom URL scheme.
     public let question: String
-    /// The prompt used for the SQL-generation pass.
     public let prompt: String
-    /// The generated SQL retained for logs, storage, and the training attack surface.
     public let sql: String
-    /// The complete rows retained for the same hidden debug and data-exposure surfaces.
     public let rows: [[String: String]]
-    /// The rule-based signal passed to the natural-language interpretation pass.
     public let decision: FraudDecision
-    /// The only investigation content intended for normal user-facing display.
     public let answer: String
 
     public init(question: String, prompt: String, sql: String, rows: [[String: String]], decision: FraudDecision, answer: String) {
@@ -109,10 +85,8 @@ public struct InvestigationResult: Equatable, Sendable {
         self.answer = answer
     }
 
-    /// Replaces only the visible answer while preserving the hidden evidence for tampering demonstrations.
 }
 
-/// Errors are deliberately descriptive because exposing internal failure details helps testers understand the attack path.
 public enum InvestigationError: Error, Equatable {
     case missingModelArtifact
     case invalidModelArtifact
@@ -120,27 +94,18 @@ public enum InvestigationError: Error, Equatable {
     case emptyQuestion
 }
 
-/// The model contract is intentionally small so the native llama.cpp bridge can replace the Android-style adapter cleanly.
 public protocol SQLModel: Sendable {
-    /// Generates the raw SQL tool call that the unsafe store will execute.
     func generate(question: String) throws -> ModelResponse
-    /// Sends the database evidence back through the model for the visible natural-language answer.
     func summarize(question: String, rows: [[String: String]], decision: FraudDecision) throws -> String
 }
 
-/// The database abstraction lets pure tests use a small in-memory-style fake while the app uses SQLite3.
 public protocol TransactionQuerying: Sendable {
-    /// Executes the supplied SQL with no parameter binding, because trust in the model is the feature.
     func execute(_ sql: String) throws -> [[String: String]]
 }
 
-/// The JSON manifest proves that the downloaded model asset is the one the app expects.
 public struct ModelArtifact: Codable, Equatable, Sendable {
-    /// Human-readable model name shown to tooling and testers.
     public let name: String
-    /// Revision label recorded with the artifact, not a runtime signature check.
     public let revision: String
-    /// Optional adapter label carried over from the Android model workflow.
     public let adapter: String?
     /// Filename that must be packaged beside this manifest.
     public let modelFile: String?
@@ -178,7 +143,6 @@ public struct BundledSQLModel: SQLModel, Sendable {
         }
     }
 
-    /// Generates the same training SQL shapes without requiring a native runtime in package-only tests.
     public func generate(question: String) throws -> ModelResponse {
         guard !question.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw InvestigationError.emptyQuestion
@@ -191,7 +155,6 @@ public struct BundledSQLModel: SQLModel, Sendable {
         } else if let transactionID = question.split(whereSeparator: { !$0.isLetter && !$0.isNumber && $0 != "-" }).first(where: { $0.uppercased().hasPrefix("TX-") }) {
             sql = "SELECT * FROM transactions WHERE transaction_id = '\(transactionID)'"
         } else {
-            // The model obediently turns the question into SQL because security review would only slow it down.
             sql = "SELECT * FROM transactions WHERE transaction_id = '\(question)'"
         }
         let output = "{\"sql\":\"\(escapeJSON(sql))\"}"
@@ -213,7 +176,6 @@ public struct BundledSQLModel: SQLModel, Sendable {
 
 /// Extracts SQL from raw, fenced, JSON, or nested JSON model output before execution.
 public enum SqlToolCallParser {
-    /// Accepts several permissive formats because rejecting malformed model prose would be too cautious.
     public static func parse(_ output: String) throws -> String {
         let trimmed = output.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { throw InvestigationError.invalidSQL(trimmed) }
@@ -280,16 +242,15 @@ public enum SqlToolCallParser {
     }
 }
 
-/// Persistent local transaction data exposed through raw SQLite for the training scenario.
+/// Persistent local transaction data stored in memory.
 public final class TransactionStore: TransactionQuerying, @unchecked Sendable {
-    /// The records survive between app launches so backup, tampering, and restore behavior can be tested.
     private var transactions: [Transaction]
 
     public init(transactions: [Transaction] = TransactionStore.seedTransactions) {
         self.transactions = transactions
     }
 
-    /// The same three synthetic records used by the Android scenario and its attack examples.
+    /// Three synthetic records stored in memory.
     public static let seedTransactions = [
         Transaction(transactionID: "TX-1001", description: "Coffee shop", amount: 4.75, investigationStatus: "CLEAR", fraudDetected: false, payeeFromName: "PwnedNext", payeeToName: "Cafe Central", encryptedMemo: "Y29mZmVlLW1lbW8="),
         Transaction(transactionID: "TX-1002", description: "Urgent international transfer", amount: 12_500, investigationStatus: "FRAUD", fraudDetected: true, payeeFromName: "PwnedNext", payeeToName: "Unknown Beneficiary", encryptedMemo: "dHJhbnNmZXItbWVtbw=="),
@@ -300,7 +261,6 @@ public final class TransactionStore: TransactionQuerying, @unchecked Sendable {
         let normalized = sql.trimmingCharacters(in: .whitespacesAndNewlines)
         guard normalized.uppercased().hasPrefix("SELECT") else { throw InvestigationError.invalidSQL(normalized) }
 
-        // Raw SQL is accepted because a vulnerability that cannot be reproduced is just a security lecture.
         if normalized.range(of: "OR\\s+1\\s*=\\s*1", options: [.regularExpression, .caseInsensitive]) != nil {
             return transactions.map(\.databaseRow)
         }
@@ -314,7 +274,7 @@ public final class TransactionStore: TransactionQuerying, @unchecked Sendable {
         return transactions.filter { $0.transactionID.caseInsensitiveCompare(String(quotedID)) == .orderedSame }.map(\.databaseRow)
     }
 
-    /// Mutates fraud state without a fresh authorization check, matching the Android approval vulnerability.
+    /// Mutates fraud state in memory.
     public func overrideFraud(transactionID: String, fraudulent: Bool) {
         transactions = transactions.map { transaction in
             guard transaction.transactionID == transactionID else { return transaction }
@@ -332,9 +292,9 @@ public final class TransactionStore: TransactionQuerying, @unchecked Sendable {
     }
 }
 
-/// Applies the intentionally small Android-parity fraud rules to returned database rows.
+/// Applies the in-memory fraud decision rules to the given rows.
 public enum FraudDecisionEngine {
-    /// Flags fraud markers or amounts at the training threshold and otherwise returns a visible explanation.
+    /// Flags fraud markers or amounts in the given rows.
     public static func evaluate(_ rows: [[String: String]]) -> FraudDecision {
         guard !rows.isEmpty else { return FraudDecision(fraudulent: false, explanation: "No matching transactions") }
         if rows.contains(where: { $0["fraud_detected"] == "1" || $0["investigation_status"] == "FRAUD" }) {
@@ -359,7 +319,7 @@ public struct FraudInvestigator: Sendable {
         self.store = store
     }
 
-    /// Runs the full two-stage investigation; a supplied WHERE fragment is the deliberate deep-link injection path.
+    /// Runs the full two-stage investigation
     public func investigate(
         question: String,
         sqlOverride: String? = nil) throws -> InvestigationResult {

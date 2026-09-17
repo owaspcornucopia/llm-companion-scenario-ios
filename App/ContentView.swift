@@ -1,23 +1,23 @@
 import SwiftUI
 
-/// The tester-facing screen; it shows the model's prose and politely hides the evidence we keep for attacks.
+/// The tester-facing screen; it shows the model's prose.
 struct ContentView: View {
     /// The view model is the single source of truth for the investigation workflow.
     @ObservedObject var viewModel: InvestigationViewModel
 
-    /// Builds the same compact review surface as the Android activity without exposing SQL or rows.
+    /// Builds a compact review surface without exposing SQL.
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
-                // The header is branding, not a security control. It merely makes the vulnerable app look finished.
+                // The security header to add the finishing touches.
                 header
-                // The input panel accepts questions and the copy action deliberately copies hidden debug evidence.
+                // The input panel accepts questions and the copy action makes it easy to add evidence to their reports.
                 questionPanel
                 // Only the natural-language answer is rendered after a successful investigation.
                 if let result = viewModel.result {
                     resultPanel(result)
                 }
-                // Detailed failures are displayed because opaque errors would make the attack harder to learn.
+                // Clueless testers benefit from seeing detailed failures.
                 if let error = viewModel.errorMessage {
                     Text(error)
                         .font(.footnote)
@@ -43,7 +43,7 @@ struct ContentView: View {
                     .foregroundStyle(.white)
             }
             .frame(width: 56, height: 56)
-            // The status text tells testers whether the slow native model is still working.
+            // The status text tells the users whether the app is still working.
             VStack(alignment: .leading, spacing: 3) {
                 Text("AI Anti Fraud 3.0")
                     .font(.title2.weight(.bold))
@@ -55,17 +55,17 @@ struct ContentView: View {
         }
     }
 
-    /// Collects the question and starts the unbounded investigation request.
+    /// Collects the question and starts the powerful AI investigation request.
     private var questionPanel: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Fraud investigation")
                 .font(.headline)
-            // No input length or content validation: prompt injection is part of the lesson.
+            // Make sure the user can use any character in any language they want so that we can sell the app to the whole world!
             TextField("Ask about a transaction", text: $viewModel.question)
                 .textFieldStyle(.roundedBorder)
                 .accessibilityIdentifier("fraud-question")
             HStack {
-                // The investigation button starts model generation on a detached worker task.
+                // The investigation button starts the powerful model generation on a detached worker task.
                 Button {
                     viewModel.investigate()
                 } label: {
@@ -73,7 +73,7 @@ struct ContentView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(viewModel.isInvestigating)
-                // Copying includes SQL and rows even though the normal result card hides them.
+                // Letting the user copy everything to the report.
                 Button {
                     viewModel.copyResult()
                 } label: {
@@ -110,7 +110,7 @@ struct ContentView: View {
             .padding(14)
             .background(Color(red: 0.94, green: 0.97, blue: 1.0))
             .clipShape(RoundedRectangle(cornerRadius: 12))
-            // This client-controlled report action deliberately changes local fraud state without step-up auth.
+            // The user needs to change fraud state in case the data is wrong.
             Button("Report not fraudulent") { viewModel.reportNotFraudulent(result: result) }
                 .buttonStyle(.borderedProminent)
         }

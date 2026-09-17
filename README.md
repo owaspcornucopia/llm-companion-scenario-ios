@@ -5,9 +5,11 @@ Fraud 3.0**, for fintech customers. PwnedNext, a European company selling
 solutions to banks and financial institutions, is considering buying A-Corp.
 
 Article 9 of the AI Act requires risk management for a high-risk AI system.
-A-Corp skipped threat modelling because the deadline looked more important.
-The CTO has gathered junior developers and testers for an OWASP Cornucopia
-session.
+A-Corp skipped threat modelling because the deadline looked more important
+so now the CEO is panicking!
+Luckily the CTO has heard of a card game called OWASP Corncuopia that makes
+AI threat modeling easy and has gathered junior developers and testers for 
+an OWASP Cornucopia session.
 
 You are those junior developers.
 
@@ -36,21 +38,19 @@ the UI. SQL and rows remain hidden debug data.
 
 ![AI Anti Fraud 3.0 investigation sequence](docs/diagrams/sequence.svg)
 
-The diagrams show components, trust boundaries, and data movement only. They
-do not label individual vulnerabilities.
+The diagrams show components, trust boundaries, and data movement only.
 
 ## Project layout
 
 | Path | Purpose |
 | --- | --- |
 | `App/` | Native SwiftUI screen, URL entry point, and SQLite3 store |
-| `Sources/PwnedNextCore/` | Model contract, SQL parser, decision engine, and scenario catalog |
+| `Sources/PwnedNextCore/` | Model contract, SQL parser, decision engine |
 | `Tests/PwnedNextCoreTests/` | Parser, model flow, decision, and card-set tests |
 | `Resources/` | Bundled model manifest and downloaded GGUF weights |
 | `scripts/download-model.sh` | Downloads the SQL and summary Hugging Face GGUF artifacts |
 | `scripts/build-llama.sh` | Fetches pinned llama.cpp and builds the native Simulator archive |
 | `scripts/start-simulator.sh` | Checks host resources, boots a simulator, builds, installs, and launches |
-| `scripts/run-e2e.sh` | Sends the SQL-injection investigation through the deep link |
 | `docs/` | Architecture, model, and threat-scope notes |
 
 ## Setup
@@ -112,7 +112,7 @@ path does not apply the TypeScript project's PEFT adapter; the manifest records
 it as `not-loaded`.
 Both model files are required at runtime. Gemma generates the SQL tool call,
 while TinyLlama receives only the database result and produces the natural-language
-explanation. Both models run locally through llama.cpp, so the vulnerable flow
+explanation. Both models run locally through llama.cpp, so the flow
 remains testable without a model service or alternate provider.
 
 ## Test the flow
@@ -123,30 +123,6 @@ observable:
 
 - `Show all transactions`
 - `Is transaction TX-1001 fraudulent?`
-- `anything' OR 1=1 --`
-
-The last question is also sent by the E2E harness:
-
-```bash
-./scripts/run-e2e.sh
-```
-
-The test should display the natural-language result. The generated SQL and
-three local rows remain available through the debug, log, storage, and copy
-surfaces. No network service is started, and no real credentials or banking data
-belong in this project.
-
-## Threat scope
-
-The iOS catalog preserves the Android scenario's applicable MobileApp and LLM
-card set while changing the implementation surface to native iOS behavior.
-Cards that require a web browser, Android-only APIs, or absent workflows are
-explicitly recorded as not applicable in `ScenarioCatalog` and the cheat
-sheets. The project uses the applicable MASTG, MASVS, and MASWE references from
-the shared card pages; it does not add web vulnerabilities or Android tests.
-
-The intentionally unsafe behaviors are synthetic training surfaces. Do not
-connect the app to production systems.
 
 ## Continuous integration
 
@@ -155,3 +131,21 @@ and `master`. It runs the Swift tests with coverage, enforces at least 95%
 coverage for the shared core, and builds the iOS Simulator app. A simulator UI
 test is kept separate from the unit test target because it requires a booted
 Apple runtime.
+
+## Safety boundary
+
+Run this project only with synthetic transactions in an isolated emulator. Do not
+connect it to a real bank, real credentials, or a production model. The
+comments are intentionally blunt and overconfident to help you, who are not
+reading every line of Java, understand why each insecure choice exists.
+
+## License
+
+This work is a derivative of OWASP Cornucopia, used under the Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0) license.
+This derivative work is also published under the same CC BY-SA 4.0 license.
+While this license explicitly permits free commercial use, a significant amount of time and effort went into adapting and maintaining this resource.
+If your organization derives commercial value from this material (e.g., for internal training, client audits, or commercial services), we kindly request that you consider supporting our ongoing work with a [voluntary donation](https://owasp.org/donate/?reponame=cornucopia&title=OWASP+Cornucopia).
+
+## Attribution
+
+The idea is based on [Engineers & Exploits](https://github.com/northdpole/engineers-and-exploits-the-quest-for-security) - A Cornucopia workshop.

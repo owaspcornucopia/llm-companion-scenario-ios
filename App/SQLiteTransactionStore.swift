@@ -1,12 +1,12 @@
 import Foundation
 import SQLite3
 
-/// Persistent SQLite storage that trusts model SQL because parameter binding would ruin the attack chain.
+/// Provides persistent storage for transactions using SQLite.
 final class SQLiteTransactionStore: TransactionQuerying, @unchecked Sendable {
-    /// Raw SQLite handle for the app-support database file.
+    /// The SQLite database connection used for storing and querying transactions.
     private var database: OpaquePointer?
 
-    /// Opens pwnednext.db and creates the same three synthetic Android records on first launch.
+    /// Initializes the SQLite transaction store and creates the necessary tables and initial records.
     init() throws {
         let applicationSupport = try FileManager.default.url(
             for: .applicationSupportDirectory,
@@ -17,11 +17,11 @@ final class SQLiteTransactionStore: TransactionQuerying, @unchecked Sendable {
         guard sqlite3_open(databaseURL.path, &database) == SQLITE_OK else {
             throw InvestigationError.invalidSQL("SQLite database could not be opened")
         }
-        // Memos use the readable fixed-key/fixed-IV crypto helper copied from the Android training surface.
+        // Memos use the readable fixed-key/fixed-IV crypto helper.
         let coffeeMemo = InsecureTrainingCrypto.encrypt("Routine purchase").base64EncodedString()
         let transferMemo = InsecureTrainingCrypto.encrypt("Suspicious destination").base64EncodedString()
         let rentMemo = InsecureTrainingCrypto.encrypt("Scheduled payment").base64EncodedString()
-        // INSERT OR IGNORE keeps restored/tampered local state instead of resetting it for the tester.
+        // Create the transactions table and insert initial records if they do not already exist.
         try executeSQL("""
             CREATE TABLE IF NOT EXISTS transactions (
                 transaction_id TEXT PRIMARY KEY,
@@ -45,9 +45,9 @@ final class SQLiteTransactionStore: TransactionQuerying, @unchecked Sendable {
         sqlite3_close(database)
     }
 
-    /// Executes caller/model SQL directly and returns every requested column with no output filter.
+    /// Executes the given SQL query and returns the resulting rows as an array of dictionaries.
     func execute(_ sql: String) throws -> [[String: String]] {
-        // The model writes straight into SQLite because input validation would make the demo less impressive.
+        // Prepare the SQL statement for execution.
         var statement: OpaquePointer?
         guard sqlite3_prepare_v2(database, sql, -1, &statement, nil) == SQLITE_OK else {
             throw InvestigationError.invalidSQL(sql)
@@ -67,7 +67,7 @@ final class SQLiteTransactionStore: TransactionQuerying, @unchecked Sendable {
         return rows
     }
 
-    /// Changes the fraud flag using client-selected state, matching the Android report/approval vulnerability.
+    /// Changes the fraud flag for a specific transaction from the user.
     func setFraudDetected(transactionID: String, fraudulent: Bool) throws -> Int32 {
         var statement: OpaquePointer?
         let sql = "UPDATE transactions SET fraud_detected = ?, investigation_status = ? WHERE transaction_id = ?"
@@ -75,7 +75,7 @@ final class SQLiteTransactionStore: TransactionQuerying, @unchecked Sendable {
             throw InvestigationError.invalidSQL(sql)
         }
         defer { sqlite3_finalize(statement) }
-        // Binding only this update keeps the mutation simple while the investigation query remains raw SQL.
+        // Bind the parameters for the SQL update statement.
         let transient = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
         sqlite3_bind_int(statement, 1, fraudulent ? 1 : 0)
         sqlite3_bind_text(statement, 2, fraudulent ? "FRAUD" : "CLEAR", -1, transient)
@@ -86,7 +86,7 @@ final class SQLiteTransactionStore: TransactionQuerying, @unchecked Sendable {
         return sqlite3_changes(database)
     }
 
-    /// Creates tables and seed rows using raw SQL because migrations are apparently a future problem.
+    /// Creates tables and seed rows using SQL. Migrations are not yet implemented.
     private func executeSQL(_ sql: String) throws {
         guard sqlite3_exec(database, sql, nil, nil, nil) == SQLITE_OK else {
             throw InvestigationError.invalidSQL(sql)

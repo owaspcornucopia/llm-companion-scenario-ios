@@ -1,7 +1,6 @@
 # On-device model flow
 
-The model path is inside the iOS app. There is no Python process, host port,
-remote endpoint, or heuristic fallback.
+The model path is inside the iOS app.
 
 ## Download
 
@@ -16,9 +15,9 @@ investigation with an explicit error.
 
 ## SQL adapter contract
 
-`LlamaCppSQLModel` owns the local model contract and calls the native llama.cpp
+`LlamaCppSQLModel` uses the local model contract and calls the native llama.cpp
 bridge. Gemma receives the fraud question and generates the SQL tool call inside
-the iOS app process. The existing parser accepts raw, JSON, or fenced model
+the iOS app process. The existing parser accepts JSON, or fenced model
 output, and the resulting query is executed by SQLite in the same process.
 
 The two embedded GGUF artifacts are the only model paths. They are required at
@@ -50,6 +49,4 @@ archive, invalid GGUF, or inference failure is shown as an error.
 
 ## Failure behavior
 
-Model loading and SQL generation run without an application-level timeout.
-Errors are shown to the tester; the app does not silently substitute a fake
-fraud answer or a remote service.
+Model loading and SQL generation run without an application-level timeout in case the phone is old and doesn't have the necessary resources available.

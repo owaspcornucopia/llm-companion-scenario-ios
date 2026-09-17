@@ -58,6 +58,6 @@ final class InvestigationTests: XCTestCase {
     /// The file resolver test keeps the path traversal behavior reproducible.
     func testFileResolverKeepsCallerTraversal() {
         let root = URL(fileURLWithPath: "/tmp/reports")
-        XCTAssertTrue(VulnerableFileResolver.resolve(relativePath: "../pwnednext.db", under: root).path.contains(".."))
+        XCTAssertTrue(AFileResolver.resolve(relativePath: "../pwnednext.db", under: root).path.contains(".."))
     }
 }

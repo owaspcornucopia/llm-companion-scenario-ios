@@ -17,9 +17,11 @@ TEST_BINARY="$TEST_BUNDLE/Contents/MacOS/PwnedNextCorePackageTests"
 # Missing artifacts mean coverage was not measured, not that coverage is magically perfect.
 [[ -f "$PROFILE" && -x "$TEST_BINARY" ]] || { printf 'Coverage artifacts were not found.\n' >&2; exit 1; }
 
-# Ask Apple's llvm-cov to produce the total line used by the policy check.
-TOTAL_LINE="$(xcrun llvm-cov report "$TEST_BINARY" -instr-profile "$PROFILE" | awk '/^TOTAL/ { line=$0 } END { print line }')"
-# Extract the percentage from the total report for the simple threshold comparison.
-PERCENT="$(printf '%s\n' "$TOTAL_LINE" | awk '{ value=$NF; sub(/%/, "", value); print value }')"
+# Ask Apple's llvm-cov to produce the report used by the policy check.
+COVERAGE_REPORT="$(xcrun llvm-cov report "$TEST_BINARY" -instr-profile "$PROFILE")"
+printf '%s\n' "$COVERAGE_REPORT"
+# Extract the final percentage from the total row; tolerate indentation and fail closed if it is absent.
+PERCENT="$(printf '%s\n' "$COVERAGE_REPORT" | awk '$1 == "TOTAL" { for (field = NF; field > 1; field--) if ($field ~ /^[0-9]+([.][0-9]+)?%$/) { sub(/%$/, "", $field); print $field; exit } }')"
+[[ "$PERCENT" =~ ^[0-9]+([.][0-9]+)?$ ]] || { printf 'Coverage total was not found in llvm-cov output.\n' >&2; exit 1; }
 # Fail pull requests and master pushes when the shared core drops below the promised 95 percent.
 awk -v coverage="$PERCENT" 'BEGIN { if (coverage + 0 < 95) { printf "Coverage %.2f%% is below the required 95%%.\n", coverage; exit 1 } printf "Coverage %.2f%% meets the required 95%%.\n", coverage }'

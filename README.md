@@ -38,7 +38,7 @@ the UI. SQL and rows remain hidden debug data.
 
 ![AI Anti Fraud 3.0 investigation sequence](docs/diagrams/sequence.svg)
 
-The diagrams show components, trust boundaries, and data movement only.
+DFD template: [OWASP Threat Dragon EoP Games DFD](docs/diagrams/owaspthratdragon.json)
 
 ## Project layout
 

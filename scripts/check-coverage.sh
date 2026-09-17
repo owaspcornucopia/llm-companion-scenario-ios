@@ -11,10 +11,11 @@ swift test --package-path "$PACKAGE_PATH" --enable-code-coverage
 
 # SwiftPM may add an architecture directory between .build and debug.
 PROFILE="$(find "$ROOT_DIR/.build" -type f -path '*/codecov/default.profdata' -print -quit)"
-# Find the generated test binary instead of hard-coding a toolchain-specific name.
-TEST_BINARY="$(find "$ROOT_DIR/.build" -type f -path '*.xctest/Contents/MacOS/*' -print -quit)"
+# Resolve the test executable directly so llvm-cov never receives a dSYM artifact.
+TEST_BUNDLE="$(find "$ROOT_DIR/.build" -type d -name 'PwnedNextCorePackageTests.xctest' -print -quit)"
+TEST_BINARY="$TEST_BUNDLE/Contents/MacOS/PwnedNextCorePackageTests"
 # Missing artifacts mean coverage was not measured, not that coverage is magically perfect.
-[[ -f "$PROFILE" && -n "$TEST_BINARY" ]] || { printf 'Coverage artifacts were not found.\n' >&2; exit 1; }
+[[ -f "$PROFILE" && -x "$TEST_BINARY" ]] || { printf 'Coverage artifacts were not found.\n' >&2; exit 1; }
 
 # Ask Apple's llvm-cov to produce the total line used by the policy check.
 TOTAL_LINE="$(xcrun llvm-cov report "$TEST_BINARY" -instr-profile "$PROFILE" | awk '/^TOTAL/ { line=$0 } END { print line }')"

@@ -34,7 +34,7 @@ a persistent SQLite database. A separate TinyLlama Chat model receives only the
 SQL result in a second prompt and returns a natural-language interpretation for
 the UI. SQL and rows remain hidden debug data.
 
-![AI Anti Fraud 3.0 data flow](docs/diagrams/data-flow.svg)
+![AI Anti Fraud 3.0 data flow](docs/diagrams/data-flow.png)
 
 ![AI Anti Fraud 3.0 investigation sequence](docs/diagrams/sequence.svg)
 

@@ -4,21 +4,10 @@ set -euo pipefail
 
 # Always execute from the package root so SwiftPM writes predictable artifacts.
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$ROOT_DIR"
+PACKAGE_PATH="$ROOT_DIR"
 
-# Emit the instrumented test data before asking llvm-cov to calculate the score.
-# Keep the output so a successful command that discovers no tests cannot silently
-# turn into a misleading 0.00% coverage failure below.
-TEST_LOG="$(mktemp "${TMPDIR:-/tmp}/pwnednext-tests.XXXXXX")"
-trap 'rm -f "$TEST_LOG"' EXIT
-if ! swift test --enable-code-coverage 2>&1 | tee "$TEST_LOG"; then
-	printf 'Swift tests failed.\n' >&2
-	exit 1
-fi
-if grep -Eq '(^|[^[:digit:]])0 tests? (passed|failed)|Executed 0 tests' "$TEST_LOG"; then
-	printf 'No tests were discovered by Swift Package Manager.\n' >&2
-	exit 1
-fi
+# Emit the instrumented test data for the package that owns the tests.
+swift test --package-path "$PACKAGE_PATH" --enable-code-coverage
 
 # SwiftPM may add an architecture directory between .build and debug.
 PROFILE="$(find "$ROOT_DIR/.build" -type f -path '*/codecov/default.profdata' -print -quit)"

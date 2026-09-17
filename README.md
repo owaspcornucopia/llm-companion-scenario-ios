@@ -38,7 +38,7 @@ the UI. SQL and rows remain hidden debug data.
 
 ![AI Anti Fraud 3.0 investigation sequence](docs/diagrams/sequence.svg)
 
-DFD template: [OWASP Threat Dragon EoP Games DFD](docs/diagrams/owaspthratdragon.json)
+DFD template: [OWASP Threat Dragon EoP Games DFD](docs/diagrams/owaspthreatdragon.json)
 
 ## Project layout
 

@@ -1,34 +1,107 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
-  <title id="title">AI Anti Fraud 3.0 iOS investigation sequence</title>
-  <desc id="desc">Neutral sequence diagram showing the user question moving from SwiftUI through the model, parser, SQLite, decision engine, and back.</desc>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1200 680">
+  <!-- Generator: Adobe Illustrator 30.3.0, SVG Export Plug-In . SVG Version: 2.1.3 Build 182)  -->
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L10,3 L0,6 Z" fill="#25445e"/></marker>
     <style>
-      .label { font: 15px -apple-system, BlinkMacSystemFont, sans-serif; fill: #102a3d; }
-      .small { font: 13px -apple-system, BlinkMacSystemFont, sans-serif; fill: #4f6475; }
-      .life { stroke: #93a6b4; stroke-width: 1.5; stroke-dasharray: 7 6; }
-      .flow { stroke: #25445e; stroke-width: 2; marker-end: url(#arrow); }
-      .return { stroke: #5d7281; stroke-width: 2; stroke-dasharray: 7 5; marker-end: url(#arrow); }
+      .st0 {
+        fill: #fff;
+      }
+
+      .st1 {
+        font-family: HelveticaNeueLTPro-Bd, 'Helvetica Neue LT Pro';
+      }
+
+      .st2 {
+        fill: none;
+      }
+
+      .st3 {
+        fill: #102a3d;
+        font-size: 15px;
+      }
+
+      .st3, .st4, .st5 {
+        font-family: HelveticaNeueLTPro-Roman, 'Helvetica Neue LT Pro';
+      }
+
+      .st3, .st5, .st6 {
+        isolation: isolate;
+      }
+
+      .st7 {
+        stroke: #000;
+        stroke-miterlimit: 10;
+        stroke-width: 5px;
+      }
+
+      .st7, .st5, .st6 {
+        fill: #4f6475;
+      }
+
+      .st5, .st6 {
+        font-size: 13px;
+      }
+
+      .st8 {
+        stroke: #93a6b4;
+        stroke-dasharray: 7 6;
+        stroke-width: 1.5px;
+      }
+
+      .st9 {
+        fill: #25445e;
+      }
     </style>
   </defs>
-  <rect width="1200" height="680" fill="#ffffff"/>
-  <text x="45" y="42" class="label" font-weight="700">AI Anti Fraud 3.0 · iOS investigation sequence</text>
-  <text x="45" y="66" class="small">Question, local model, SQL, database rows, decision, and visible result</text>
+  <rect class="st0" y="0" width="1200" height="680"/>
+  <text class="st3" transform="translate(45 37)"><tspan x="0" y="0">AI Anti Fraud 3.0 · iOS investigation</tspan></text>
+  <text class="st5" transform="translate(44 56)"><tspan x="0" y="0">The iOS app keeps the mobile investigation flow inside one process. The user question enters through the SwiftUI screen or the custom URL entry point. </tspan><tspan x="0" y="15.6">The bundled llama.cpp model returns a SQL tool call, the parser extracts the query, SQLite returns rows, and the same TinyLLama interprets those rows </tspan><tspan x="0" y="31.2">into the natural-language answer shown to the user.</tspan></text>
   <g>
-    <text x="120" y="112" text-anchor="middle" class="label">Tester</text>
-    <text x="300" y="112" text-anchor="middle" class="label">SwiftUI</text>
-    <text x="480" y="112" text-anchor="middle" class="label">SQL model</text>
-    <text x="660" y="112" text-anchor="middle" class="label">Parser</text>
-    <text x="840" y="112" text-anchor="middle" class="label">SQLite</text>
-    <text x="1020" y="112" text-anchor="middle" class="label">Decision</text>
-    <path d="M120 125 V620 M300 125 V620 M480 125 V620 M660 125 V620 M840 125 V620 M1020 125 V620" class="life"/>
-
-    <path d="M120 170 H300" class="flow"/><text x="210" y="160" text-anchor="middle" class="small">fraud question</text>
-    <path d="M300 235 H480" class="flow"/><text x="390" y="225" text-anchor="middle" class="small">prompt</text>
-    <path d="M480 300 H660" class="flow"/><text x="570" y="290" text-anchor="middle" class="small">SQL tool call</text>
-    <path d="M660 365 H840" class="flow"/><text x="750" y="355" text-anchor="middle" class="small">query</text>
-    <path d="M840 430 H1020" class="flow"/><text x="930" y="420" text-anchor="middle" class="small">transaction rows</text>
-    <path d="M1020 495 H300" class="return"/><text x="660" y="485" text-anchor="middle" class="small">verdict, SQL, and rows</text>
-    <path d="M300 560 H120" class="return"/><text x="210" y="550" text-anchor="middle" class="small">visible result</text>
+    <text class="st3" transform="translate(99.86 112)"><tspan x="0" y="0">User</tspan></text>
+    <text class="st3" transform="translate(275.85 112)"><tspan x="0" y="0">ViewModel</tspan></text>
+    <text class="st3" transform="translate(442.34 112)"><tspan x="0" y="0">FraudInvestigator</tspan></text>
+    <text class="st3" transform="translate(638.34 112)"><tspan x="0" y="0">Gemma AI</tspan></text>
+    <text class="st3" transform="translate(817.22 112)"><tspan x="0" y="0">SQLite</tspan></text>
+    <text class="st3" transform="translate(991.11 112)"><tspan x="0" y="0">TinyLLama AI</tspan></text>
+    <path class="st8" d="M120,125v495M300,125v495M480,125v495M660,125v495M840,125v495M1020,125v495"/>
+    <path class="st2" d=""/>
+    <path class="st9" d="M282,164l20,6-20,6v-12Z"/>
+    <path class="st9" d="M300,170"/>
+    <text class="st5" transform="translate(168.1 160)"><tspan x="0" y="0">fraud question</tspan></text>
+    <path class="st2" d=""/>
+    <path class="st9" d="M462,229l20,6-20,6v-12Z"/>
+    <path class="st9" d="M480,235"/>
+    <text class="st5" transform="translate(348.43 224.05)"><tspan x="0" y="0">investigate fraud</tspan></text>
+    <path class="st2" d=""/>
+    <path class="st9" d="M642,294l20,6-20,6v-12Z"/>
+    <path class="st9" d="M660,300"/>
+    <text class="st5" transform="translate(532.8 290)"><tspan x="0" y="0">Generate SQL</tspan></text>
+    <path class="st2" d=""/>
+    <path class="st9" d="M822,359l20,6-20,6v-12Z"/>
+    <path class="st9" d="M840,365"/>
+    <text class="st5" transform="translate(733.63 355)"><tspan x="0" y="0">SELECT fraud</tspan></text>
+    <path class="st2" d=""/>
+    <path class="st9" d="M1002,424l20,6-20,6v-12Z"/>
+    <path class="st9" d="M1020,430"/>
+    <text class="st5" transform="translate(863.86 420)"><tspan x="0" y="0">Generate Chat response</tspan></text>
+    <path class="st2" d=""/>
+    <path class="st9" d="M318,501l-20-6,20-6v12Z"/>
+    <path class="st9" d="M300,495"/>
+    <text class="st5" transform="translate(358.49 481.82)"><tspan x="0" y="0">Fraud verdict</tspan></text>
+    <path class="st2" d=""/>
+    <path class="st9" d="M138,566l-20-6,20-6v12Z"/>
+    <path class="st9" d="M120,560"/>
+    <text class="st6" transform="translate(125.14 525.02)"><tspan class="st4"><tspan x="0" y="0">Prepare result for viewing and</tspan></tspan><tspan class="st4" x="0" y="15.6">clip/pastboard</tspan><tspan class="st1" x="84.26" y="15.6" xml:space="preserve"> for the report</tspan></text>
+    <line class="st7" x1="138" y1="560" x2="300" y2="560"/>
+    <line class="st7" x1="318" y1="495" x2="475.55" y2="495"/>
+    <line class="st7" x1="1012" y1="464.68" x2="489.34" y2="464.68"/>
+    <path class="st7" d="M312.1,499.23"/>
+    <line class="st7" x1="1004.06" y1="430" x2="844.23" y2="430"/>
+    <line class="st7" x1="822" y1="365" x2="667.04" y2="365"/>
+    <line class="st7" x1="642" y1="300" x2="484.74" y2="300"/>
+    <line class="st7" x1="462" y1="235" x2="307.55" y2="235"/>
+    <path class="st9" d="M499.34,470.68l-20-6,20-6v12Z"/>
+    <text class="st5" transform="translate(712.39 452.94)"><tspan x="0" y="0">Fraud analysis</tspan></text>
   </g>
+  <line class="st7" x1="282" y1="170" x2="124.74" y2="170"/>
 </svg>

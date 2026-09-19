@@ -40,6 +40,10 @@ the UI. SQL and rows remain hidden debug data.
 
 DFD template: [OWASP Threat Dragon EoP Games DFD](docs/diagrams/owaspthreatdragon.json)
 
+## Screenshots
+
+<img src="docs/screenshot.jpeg" width="49%"/><img src="docs/screenshot2.png" width="49%"/>
+
 ## Project layout
 
 | Path | Purpose |
